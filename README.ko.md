@@ -7,7 +7,11 @@
 
 Babtab Chrome 확장 프로그램을 위한 **로컬 중계 서버**입니다. AI 에이전트(Cursor / Pi / Claude Code / …)를 실제 Chrome에 연결해 줍니다.
 
-MV3 확장 프로그램은 스스로 포트를 listen 할 수 없기 때문에, 이 작은 프로그램이 다리 역할을 합니다. `localhost`에서 동작하므로 트래픽이 컴퓨터 밖으로 나가지 않습니다. Relay는 전달만 담당하며, **페이지 내용을 볼 수 없습니다**.
+MV3 확장 프로그램은 스스로 포트를 listen 할 수 없기 때문에, 이 작은 프로그램이 다리 역할을 합니다. `localhost`에서 동작하므로 트래픽이 컴퓨터 밖으로 나가지 않습니다. Relay는 요청과 결과를 메모리에서만 전달합니다(페이지 관찰 및 스크린샷 포함). 페이지 내용을 저장하지 않습니다.
+
+## 인증된 디바이스 연결로 업그레이드
+
+Relay와 확장 프로그램을 함께 업데이트하고, 확장 프로그램을 새로고침한 뒤 Side Panel에서 다시 연결한 다음, 각 에이전트마다 2단계를 다시 실행하세요. 확장 프로그램이 새 `dev_v2_` 디바이스 ID를 생성합니다. 이전 ID에 연결된 토큰으로는 새 연결을 제어할 수 없습니다. Relay는 이제 명시적으로 `127.0.0.1`에만 바인딩됩니다. 원격 배포에서는 `HOST`를 직접 설정하고 TLS(`wss://` / `https://`)로 전송 중 인증 정보를 보호하세요.
 
 ## 연결 방식 (3가지 역할)
 
@@ -52,26 +56,30 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ### 3단계: 확장 프로그램을 Relay에 연결
 
 1. Chrome에서 아무 웹사이트나 열고, 툴바의 Babtab 아이콘을 클릭해 **Side Panel** 열기
-2. Relay URL에는 기본값 `ws://127.0.0.1:3000`이 이미 입력되어 있으니 그대로 두기
+2. 1단계에서 포트만 확인(기본값 `3000`, Relay와 일치해야 함) — URL 입력 불필요
 3. **"Save & Connect" (저장 후 연결)** 클릭
 
 이 단계에서 내 Chrome이 Relay의 디바이스 하나로 등록됩니다.
+(VPS의 원격 Relay를 쓰는 경우에도 같은 단계의 *Advanced: custom Relay URL*에서 설정할 수 있습니다.)
 
 ### 4단계: AI 에이전트를 Relay에 연결 (Cursor 예시)
 
-1. Side Panel 같은 페이지에서 에이전트 선택 → **"Copy config" (설정 복사)** 클릭
-2. `~/.cursor/mcp.json`의 `mcpServers`에 붙여넣기(단일 프로젝트 전용으로 쓰려면 해당 프로젝트의 `.cursor/mcp.json`):
+1. Side Panel 같은 페이지에서 2단계 → **Cursor** 클릭 → 한 줄 명령어를 복사:
 
-```json
-{
-  "mcpServers": {
-    "babtab": {
-      "url": "http://127.0.0.1:3000/mcp",
-      "headers": { "Authorization": "Bearer 발급받은-토큰" }
-    }
-  }
-}
+```bash
+npx -y @babtab/relay setup --target cursor --port 3000 --device <내-디바이스-ID>
 ```
+
+2. 아무 터미널에 붙여넣어 실행. 6자리 페어링 코드가 표시되면 Side Panel 상단 배너에서 **Approve(승인)** 클릭.
+3. 완료: 명령어가 `~/.cursor/mcp.json`에 `babtab`을 자동으로 기록합니다
+   (기존 항목은 유지, 이전 파일은 `.bak`으로 백업). Cursor에서 MCP를 새로고침하면
+   (Settings → MCP) 패널에 `Controlled by: cursor`가 표시됩니다.
+
+지원하는 `--target`: `cursor`, `claude-code`, `windsurf`, `copilot`,
+`copilot-insiders`, `codex`, `pi`, `claude-desktop`, `antigravity`, `devin`,
+`kimi`, `hermes`, `manual`. `npx -y @babtab/relay setup --help`에서 전체 명령어 확인 가능
+(`--list-targets`는 하네스별 완성형 명령어를 한 번에 출력). 터미널을 쓸 수 없는 환경에서는
+2단계의 *Pair & copy JSON manually*로 수동 붙여넣기로 돌아갈 수 있습니다.
 
 3. 패널에 `Controlled by: cursor`가 표시되면 연결 완료.
 
@@ -81,10 +89,10 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 
 ## 자주 묻는 질문
 
-- **"Save & Connect"을 눌러도 반응이 없어요.** 먼저 Relay 터미널에 `listening`이 표시되는지 확인하고, URL이 `ws://127.0.0.1:3000`인지, 포트가 일치하는지 확인하세요.
-- **페어링 코드가 만료됐어요.** 코드 유효 시간이 짧으니 "Copy config"을 다시 눌러주세요.
-- **토큰을 바꾸고 싶어요.** 4단계를 다시 실행하면 새 토큰이 발급됩니다. `mcp.json` 업데이트를 잊지 마세요.
-- **에이전트와 Chrome이 서로 다른 컴퓨터에 있어요.** (고급) Relay를 VPS에 올리고 Side Panel의 Relay URL을 `wss://…`로 바꾸면 됩니다. 과정은 동일합니다.
+- **"Save & Connect"을 눌러도 반응이 없어요.** 먼저 Relay 터미널에 `listening`이 표시되는지 확인하고, 1단계의 포트가 Relay 포트와 일치하는지 확인하세요.
+- **페어링 코드가 만료됐어요.** 코드 유효 시간이 짧으니 setup 명령어를 다시 실행해 주세요.
+- **토큰을 바꾸고 싶어요.** setup 명령어를 다시 실행하면 새 토큰이 발급되고 설정도 자동으로 다시 기록됩니다(이전 파일은 `.bak`으로 유지).
+- **에이전트와 Chrome이 서로 다른 컴퓨터에 있어요.** (고급) Relay를 VPS에 올리고, Side Panel 1단계의 *Advanced: custom Relay URL*에 `wss://…`를 설정한 뒤 setup 명령어에 `--relay-url https://…`를 붙이면 됩니다. 과정은 동일합니다.
 
 ## 개인정보 보호
 
@@ -95,9 +103,3 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ## 개발자 안내
 
 이 저장소에는 릴리스 산출물(난독화된 단일 번들 + 실행 파일)만 포함되며, 개발 소스는 포함되지 않습니다. Issue와 토론은 이 저장소에 직접 올려주세요.
-
-## 라이선스
-
-Apache-2.0 — [LICENSE](LICENSE) 및 [NOTICE](NOTICE) 참조.
-
-Copyright 2026 Poseidoncode.

@@ -7,7 +7,11 @@
 
 Babtab Chrome 拡張機能のための**ローカル中継サーバー**です。あなたの AI エージェント（Cursor / Pi / Claude Code / …）を、実際の Chrome につなぎます。
 
-MV3 の拡張機能は自分でポートを listen できないため、この小さなプログラムが橋渡しをします。`localhost` 上で動作するので、通信が PC の外に出ることはありません。Relay は転送だけを行い、**ページの内容を見ることはできません**。
+MV3 の拡張機能は自分でポートを listen できないため、この小さなプログラムが橋渡しをします。`localhost` 上で動作するので、通信が PC の外に出ることはありません。Relay はリクエストと結果をメモリ上でのみ転送します（ページ観測やスクリーンショットを含みます）。ページ内容を保存することはありません。
+
+## デバイス認証へのアップグレード
+
+Relay と拡張機能を一緒に更新し、拡張機能を再読み込みして Side Panel で再接続したうえで、各エージェントについてステップ 2 を再実行してください。拡張機能は新しい `dev_v2_` デバイス ID を生成します。古い ID に紐づくトークンでは新しい接続を操作できません。Relay は明示的に `127.0.0.1` にバインドするようになりました。リモート配置では `HOST` を指定し、TLS（`wss://`／`https://`）で転送中の認証情報を保護してください。
 
 ## 接続方法（3つの役割）
 
@@ -52,28 +56,30 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ### ステップ 3：拡張機能を Relay に接続する
 
 1. Chrome で任意のサイトを開き、ツールバーの Babtab アイコンをクリックして **Side Panel** を開く
-2. Relay URL にはデフォルトで `ws://127.0.0.1:3000` が入力済みなので、そのまま
+2. ステップ 1 でポートを確認するだけです（デフォルト `3000`、Relay と一致させること）。URL の入力は不要です
 3. **"Save & Connect"（保存して接続）**をクリック
 
 この手順で、あなたの Chrome が Relay 上のデバイスとして登録されます。
+（VPS 上のリモート Relay を使う場合も、同じステップ内の *Advanced: custom Relay URL* で対応できます。）
 
 ### ステップ 4：AI エージェントを Relay に接続する（Cursor の例）
 
-1. Side Panel の同じページでエージェントを選択 → **"Copy config"（設定をコピー）**をクリック
-2. `~/.cursor/mcp.json` の `mcpServers` に貼り付け（単一プロジェクト専用にする場合は当該プロジェクトの `.cursor/mcp.json`）：
+1. Side Panel の同じページでステップ 2 → **Cursor** をクリック → ワンライナーのコマンドをコピーします：
 
-```json
-{
-  "mcpServers": {
-    "babtab": {
-      "url": "http://127.0.0.1:3000/mcp",
-      "headers": { "Authorization": "Bearer 取得したトークン" }
-    }
-  }
-}
+```bash
+npx -y @babtab/relay setup --target cursor --port 3000 --device <あなたのデバイスID>
 ```
 
-3. パネルに `Controlled by: cursor` と表示されたら接続完了です。
+2. 任意のターミナルに貼り付けて実行します。6 桁のペアリングコードが表示されるので、Side Panel 上部のバナーで **Approve（承認）**します。
+3. 完了です。コマンドが `~/.cursor/mcp.json` に `babtab` を自動で書き込みます
+   （既存のエントリは保持され、変更前のファイルは `.bak` として残ります）。Cursor で MCP をリロード
+   （Settings → MCP）すると、パネルに `Controlled by: cursor` と表示されます。
+
+サポートされている `--target`：`cursor`、`claude-code`、`windsurf`、`copilot`、
+`copilot-insiders`、`codex`、`pi`、`claude-desktop`、`antigravity`、`devin`、
+`kimi`、`hermes`、`manual`。`npx -y @babtab/relay setup --help` ですべての
+コマンドを確認できます（`--list-targets` で各ハーネス用の完成済みコマンドを一覧表示）。
+ターミナルが使えない環境では、ステップ 2 の *Pair & copy JSON manually* で手動貼り付けに戻れます。
 
 動作確認の一言（エージェントに依頼）：
 
@@ -81,10 +87,10 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 
 ## よくある質問
 
-- **"Save & Connect"を押しても反応がない？** まず Relay のターミナルに `listening` と表示されているか確認し、URL が `ws://127.0.0.1:3000` でポートが一致しているか確認してください。
-- **ペアリングコードの有効期限が切れた？** コードの有効期間は短いので、"Copy config"をもう一度押してください。
-- **トークンを変えたい？** ステップ 4 を再実行すると新しいトークンが発行されます。`mcp.json` の更新をお忘れなく。
-- **エージェントと Chrome が別マシン？**（応用）Relay を VPS 上に置き、Side Panel の Relay URL を `wss://…` に変更するだけです。手順は同じです。
+- **"Save & Connect"を押しても反応がない？** まず Relay のターミナルに `listening` と表示されているか確認し、ステップ 1 のポートが Relay のポートと一致しているか確認してください。
+- **ペアリングコードの有効期限が切れた？** コードの有効期間は短いので、setup コマンドを再実行してください。
+- **トークンを変えたい？** setup コマンドを再実行すると新しいトークンが発行され、設定も自動で書き換えられます（旧ファイルは `.bak` として残ります）。
+- **エージェントと Chrome が別マシン？**（応用）Relay を VPS 上に置き、Side Panel ステップ 1 の *Advanced: custom Relay URL* に `wss://…` を設定し、setup コマンドに `--relay-url https://…` を付けるだけです。手順は同じです。
 
 ## プライバシー
 
@@ -95,9 +101,3 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ## 開発者向け
 
 このリポジトリにはリリース成果物（難読化済みの単一バンドル＋実行ファイル）のみが含まれており、開発ソースは含まれません。Issue やディスカッションはこのリポジトリに直接お願いします。
-
-## ライセンス
-
-Apache-2.0 — [LICENSE](LICENSE) と [NOTICE](NOTICE) を参照。
-
-Copyright 2026 Poseidoncode.

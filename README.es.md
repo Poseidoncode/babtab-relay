@@ -7,7 +7,11 @@
 
 El **servidor relay local** para la extensión Babtab de Chrome: conecta tu agente de IA (Cursor / Pi / Claude Code / …) con tu Chrome real.
 
-Las extensiones MV3 no pueden escuchar en un puerto, así que este pequeño programa actúa como puente. Se ejecuta en `localhost`, por lo que el tráfico nunca sale de tu máquina. El relay solo reenvía mensajes — **no puede ver el contenido de tus páginas**.
+Las extensiones MV3 no pueden escuchar en un puerto, así que este pequeño programa actúa como puente. Se ejecuta en `localhost`, por lo que el tráfico nunca sale de tu máquina. El relay reenvía solicitudes y resultados solo en memoria (incluidas observaciones de página y capturas); no almacena el contenido de las páginas.
+
+## Actualización a conexiones de dispositivo autenticadas
+
+Actualiza el relay y la extensión juntos, recarga la extensión, reconecta en el Side Panel y repite el paso 2 para cada agente. La extensión genera un nuevo ID de dispositivo `dev_v2_`; los tokens vinculados a IDs anteriores ya no controlan la nueva conexión. El relay ahora se vincula explícitamente a `127.0.0.1`. En despliegues remotos debes configurar `HOST` y usar TLS (`wss://` / `https://`) para proteger las credenciales en tránsito.
 
 ## Cómo se conecta (3 roles)
 
@@ -52,26 +56,31 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ### Paso 3: Conecta la extensión al relay
 
 1. Abre cualquier sitio web en Chrome, haz clic en el icono de Babtab para abrir el **Side Panel**
-2. La Relay URL ya viene con `ws://127.0.0.1:3000` — déjala así
+2. Paso 1: confirma el puerto (por defecto `3000`, debe coincidir con el relay) — sin escribir URLs
 3. Haz clic en **"Save & Connect" (Guardar y conectar)**
 
 Esto registra tu Chrome como un dispositivo en el relay.
+(¿Relay remoto en un VPS? Usa *Advanced: custom Relay URL* en el mismo paso.)
 
 ### Paso 4: Conecta tu agente de IA al relay (ejemplo con Cursor)
 
-1. En la misma página del Side Panel, elige tu agente → haz clic en **"Copy config" (Copiar configuración)**
-2. Pégalo en `mcpServers` dentro de `~/.cursor/mcp.json` (o en el `.cursor/mcp.json` del proyecto para un solo proyecto):
+1. En la misma página del Side Panel, paso 2 → haz clic en **Cursor** → copia el comando de una línea:
 
-```json
-{
-  "mcpServers": {
-    "babtab": {
-      "url": "http://127.0.0.1:3000/mcp",
-      "headers": { "Authorization": "Bearer el-token-que-acabas-de-obtener" }
-    }
-  }
-}
+```bash
+npx -y @babtab/relay setup --target cursor --port 3000 --device <tu-device-id>
 ```
+
+2. Pégalo en cualquier terminal y ejecútalo. Mostrará un código de emparejamiento
+   de 6 dígitos — apruébalo en el banner superior del Side Panel.
+3. Listo: el comando escribe `babtab` en `~/.cursor/mcp.json` por ti
+   (conserva las entradas existentes y guarda el archivo anterior como `.bak`).
+   Recarga MCP en Cursor (Settings → MCP) y el panel mostrará `Controlled by: cursor`.
+
+Valores `--target` soportados: `cursor`, `claude-code`, `windsurf`, `copilot`,
+`copilot-insiders`, `codex`, `pi`, `claude-desktop`, `antigravity`, `devin`,
+`kimi`, `hermes`, `manual`. `npx -y @babtab/relay setup --help` muestra todos los
+comandos (`--list-targets` imprime una línea lista por harness). ¿Sin terminal a mano?
+El paso 2 también ofrece *Pair & copy JSON manually* como alternativa.
 
 3. Cuando el panel muestre `Controlled by: cursor`, ya estás conectado.
 
@@ -81,10 +90,10 @@ Una frase para verificar (pídesela a tu agente):
 
 ## Preguntas frecuentes
 
-- **¿"Guardar y conectar" no hace nada?** Revisa primero que la terminal del relay muestre `listening`, y confirma que la URL sea `ws://127.0.0.1:3000` con el puerto correcto.
-- **¿Caducó el código de emparejamiento?** Los códigos duran poco — pulsa "Copiar configuración" de nuevo.
-- **¿Quieres un token nuevo?** Repetir el paso 4 genera un token nuevo; recuerda actualizar `mcp.json`.
-- **¿Agente y Chrome en máquinas distintas?** (Avanzado) Pon el relay en un VPS y cambia la Relay URL del Side Panel a tu `wss://…`. El flujo es el mismo.
+- **¿"Guardar y conectar" no hace nada?** Revisa primero que la terminal del relay muestre `listening`, y confirma que el puerto del paso 1 coincida con el del relay.
+- **¿Caducó el código de emparejamiento?** Los códigos duran poco — vuelve a ejecutar el comando setup.
+- **¿Quieres un token nuevo?** Repetir el comando setup genera un token nuevo y reescribe la config (se conserva el `.bak` anterior).
+- **¿Agente y Chrome en máquinas distintas?** (Avanzado) Pon el relay en un VPS, usa *Advanced: custom Relay URL* en el paso 1 del Side Panel con tu `wss://…` y pasa `--relay-url https://…` al comando setup. El flujo es el mismo.
 
 ## Privacidad
 
@@ -95,9 +104,3 @@ Una frase para verificar (pídesela a tu agente):
 ## Desarrolladores
 
 Este repo solo contiene artefactos de release (un bundle ofuscado + binarios), no el código fuente de desarrollo. Abre issues y discusiones aquí mismo.
-
-## Licencia
-
-Apache-2.0 — ver [LICENSE](LICENSE) y [NOTICE](NOTICE).
-
-Copyright 2026 Poseidoncode.

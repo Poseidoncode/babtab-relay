@@ -7,7 +7,11 @@
 
 Babtab Chrome एक्सटेंशन के लिए **लोकल relay सर्वर**: यह आपके AI एजेंट (Cursor / Pi / Claude Code / …) को आपके असली Chrome से जोड़ता है।
 
-MV3 एक्सटेंशन स्वयं किसी पोर्ट पर listen नहीं कर सकते, इसलिए यह छोटा प्रोग्राम bridge का काम करता है। यह `localhost` पर चलता है, इसलिए ट्रैफ़िक आपकी मशीन से बाहर कभी नहीं जाता। Relay सिर्फ़ संदेश आगे बढ़ाता है — **यह आपकी पेज सामग्री नहीं देख सकता**।
+MV3 एक्सटेंशन स्वयं किसी पोर्ट पर listen नहीं कर सकते, इसलिए यह छोटा प्रोग्राम bridge का काम करता है। यह `localhost` पर चलता है, इसलिए ट्रैफ़िक आपकी मशीन से बाहर कभी नहीं जाता। Relay अनुरोध और परिणाम सिर्फ़ मेमोरी में आगे बढ़ाता है (पेज अवलोकन और स्क्रीनशॉट सहित); यह पेज सामग्री को store नहीं करता।
+
+## प्रमाणित डिवाइस कनेक्शन पर अपग्रेड
+
+Relay और एक्सटेंशन दोनों को एक साथ अपडेट करें, एक्सटेंशन reload करें, Side Panel में फिर से connect करें, और हर एजेंट के लिए चरण 2 दोहराएँ। एक्सटेंशन नई `dev_v2_` डिवाइस ID बनाता है; पुरानी ID से जुड़े टोकन नया कनेक्शन नियंत्रित नहीं कर सकते। Relay अब स्पष्ट रूप से सिर्फ़ `127.0.0.1` पर bind होता है। रिमोट डिप्लॉयमेंट में `HOST` सेट करें और ट्रांज़िट में क्रेडेंशियल की सुरक्षा के लिए TLS (`wss://` / `https://`) इस्तेमाल करें।
 
 ## यह कैसे जुड़ता है (3 भूमिकाएँ)
 
@@ -52,26 +56,31 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ### चरण 3: एक्सटेंशन को relay से जोड़ें
 
 1. Chrome में कोई भी वेबसाइट खोलें, Babtab टूलबार आइकन पर क्लिक करके **Side Panel** खोलें
-2. Relay URL में पहले से `ws://127.0.0.1:3000` भरा है — वैसे ही रहने दें
+2. चरण 1: पोर्ट की पुष्टि करें (डिफ़ॉल्ट `3000`, relay से मेल खाना चाहिए) — URL टाइप करने की ज़रूरत नहीं
 3. "Save & Connect" पर क्लिक करें
 
 इससे आपका Chrome relay पर एक device के रूप में पंजीकृत हो जाता है।
+(VPS पर रिमोट relay? उसी चरण में *Advanced: custom Relay URL* इस्तेमाल करें।)
 
 ### चरण 4: AI एजेंट को relay से जोड़ें (Cursor उदाहरण सहित)
 
-1. Side Panel के उसी पेज पर अपना एजेंट चुनें → "Copy config" पर क्लिक करें
-2. `~/.cursor/mcp.json` के `mcpServers` में paste करें (सिर्फ़ एक प्रोजेक्ट हेतु हो तो उस प्रोजेक्ट की `.cursor/mcp.json` में):
+1. Side Panel के उसी पेज पर चरण 2 → **Cursor** पर क्लिक करें → एक-पंक्ति कमांड copy करें:
 
-```json
-{
-  "mcpServers": {
-    "babtab": {
-      "url": "http://127.0.0.1:3000/mcp",
-      "headers": { "Authorization": "Bearer अभी-मिला-टोकन" }
-    }
-  }
-}
+```bash
+npx -y @babtab/relay setup --target cursor --port 3000 --device <आपकी-device-id>
 ```
+
+2. किसी भी टर्मिनल में paste करके चलाएँ। 6-अंकीय पेयरिंग कोड दिखेगा —
+   Side Panel के ऊपर banner में **Approve** करें।
+3. हो गया: कमांड आपके लिए `~/.cursor/mcp.json` में `babtab` लिख देता है
+   (मौजूदा entries सुरक्षित, पुरानी फ़ाइल `.bak` के रूप में रहती है)। Cursor में MCP
+   reload करें (Settings → MCP) और पैनल में `Controlled by: cursor` दिखेगा।
+
+समर्थित `--target` मान: `cursor`, `claude-code`, `windsurf`, `copilot`,
+`copilot-insiders`, `codex`, `pi`, `claude-desktop`, `antigravity`, `devin`,
+`kimi`, `hermes`, `manual`। सभी कमांड हेतु `npx -y @babtab/relay setup --help` चलाएँ
+(`--list-targets` हर harness हेतु तैयार पंक्ति print करता है)। टर्मिनल उपलब्ध न हो?
+चरण 2 में *Pair & copy JSON manually* विकल्प भी है।
 
 3. जब पैनल में `Controlled by: cursor` दिखे, तो कनेक्शन हो गया।
 
@@ -81,10 +90,10 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 
 ## अक्सर पूछे जाने वाले प्रश्न
 
-- **"Save & Connect" दबाने पर कुछ नहीं होता?** पहले relay टर्मिनल में `listening` देखें, फिर पुष्टि करें कि URL `ws://127.0.0.1:3000` है और पोर्ट मेल खाता है।
-- **पेयरिंग कोड समाप्त हो गया?** कोड थोड़ी देर ही चलते हैं — "Copy config" दोबारा दबाएँ।
-- **नया टोकन चाहिए?** चरण 4 दोहराने पर नया टोकन मिलता है; `mcp.json` अपडेट करना न भूलें।
-- **एजेंट और Chrome अलग मशीनों पर हैं?** (उन्नत) Relay को VPS पर रखें और Side Panel की Relay URL को अपने `wss://…` पर बदल दें। प्रक्रिया वही रहती है।
+- **"Save & Connect" दबाने पर कुछ नहीं होता?** पहले relay टर्मिनल में `listening` देखें, फिर पुष्टि करें कि चरण 1 का पोर्ट relay के पोर्ट से मेल खाता है।
+- **पेयरिंग कोड समाप्त हो गया?** कोड थोड़ी देर ही चलते हैं — setup कमांड दोबारा चलाएँ।
+- **नया टोकन चाहिए?** setup कमांड दोहराने पर नया टोकन मिलता है और कॉन्फ़िग फिर से लिखी जाती है (पुरानी `.bak` बनी रहती है)।
+- **एजेंट और Chrome अलग मशीनों पर हैं?** (उन्नत) Relay को VPS पर रखें, Side Panel चरण 1 में *Advanced: custom Relay URL* में अपना `wss://…` भरें और setup कमांड में `--relay-url https://…` जोड़ें। प्रक्रिया वही रहती है।
 
 ## गोपनीयता
 
@@ -95,9 +104,3 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ## डेवलपर्स
 
 इस repo में सिर्फ़ release artifacts हैं (एक obfuscated bundle + binaries), development source नहीं। Issues और चर्चाएँ यहीं खोलें।
-
-## लाइसेंस
-
-Apache-2.0 — [LICENSE](LICENSE) और [NOTICE](NOTICE) देखें।
-
-Copyright 2026 Poseidoncode.

@@ -1,18 +1,13 @@
 {
   "name": "@babtab/relay",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Babtab local relay: auth, pairing, WSS routing, Streamable HTTP MCP for the Babtab Chrome extension. No DOM, no grounding, no page storage.",
-  "license": "Apache-2.0",
-  "author": "Poseidoncode",
   "type": "module",
   "bin": {
-    "babtab-relay": "./dist/relay.cjs"
+    "babtab-relay": "dist/relay.cjs"
   },
   "files": [
     "dist/relay.cjs",
-    "LICENSE",
-    "NOTICE",
-    "README.md",
     "README.zh-TW.md",
     "README.ja.md",
     "README.ko.md",
@@ -32,7 +27,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "repository": "github:Poseidoncode/babtab-relay",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Poseidoncode/babtab-relay.git"
+  },
   "homepage": "https://github.com/Poseidoncode/babtab-relay#readme",
   "bugs": "https://github.com/Poseidoncode/babtab-relay/issues"
 }

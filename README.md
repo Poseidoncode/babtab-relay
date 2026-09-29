@@ -7,7 +7,15 @@
 
 The **local relay server** for the Babtab Chrome extension: it connects your AI agent (Cursor / Pi / Claude Code / …) to your real Chrome.
 
-MV3 extensions cannot listen on a port, so this tiny program acts as the bridge. It runs on `localhost`, so traffic never leaves your machine. The relay only forwards messages — **it cannot see your page content**.
+MV3 extensions cannot listen on a port, so this tiny program acts as the bridge. It runs on `localhost`, so traffic never leaves your machine. The relay forwards requests and results in memory, including page observations and screenshots; it does not persist page content.
+
+## Upgrading to authenticated device connections
+
+Update the relay and extension together, reload the extension, reconnect in the
+Side Panel, and run Step 2 again for each agent. The extension creates a new
+`dev_v2_` device ID; tokens paired to older IDs do not control the new connection.
+The relay now binds `127.0.0.1` explicitly. A remote deployment must opt in with
+`HOST` and use TLS (`wss://` / `https://`) to protect credentials in transit.
 
 ## How it connects (3 roles)
 
@@ -52,39 +60,42 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ### Step 3: Connect the extension to the relay
 
 1. Open any website in Chrome, click the Babtab toolbar icon to open the **Side Panel**
-2. Relay URL is pre-filled with `ws://127.0.0.1:3000` — leave it
+2. Step 1: confirm the port (default `3000`, must match the relay) — no URL typing needed
 3. Click **"Save & Connect"**
 
 This registers your Chrome as a device on the relay.
+(Remote relay on a VPS? Use *Advanced: custom Relay URL* in the same step.)
 
 ### Step 4: Connect your AI agent to the relay (Cursor as example)
 
-1. On the same Side Panel page, pick your agent → click **"Copy config"**
-2. Paste into `mcpServers` in `~/.cursor/mcp.json` (or the project's `.cursor/mcp.json` for single-project use):
+1. On the same Side Panel page, Step 2 → click **Cursor** → copy the one-line command:
 
-```json
-{
-  "mcpServers": {
-    "babtab": {
-      "url": "http://127.0.0.1:3000/mcp",
-      "headers": { "Authorization": "Bearer the-token-you-just-got" }
-    }
-  }
-}
+```bash
+npx -y @babtab/relay setup --target cursor --port 3000 --device <your-device-id>
 ```
 
-3. When the panel shows `Controlled by: cursor`, you're connected.
+2. Paste it into any terminal and run it. It shows a 6-digit pairing code —
+   approve it on the banner at the top of the Side Panel.
+3. Done: the command writes `babtab` into `~/.cursor/mcp.json` for you
+   (existing entries preserved, previous file kept as `.bak`). Reload MCP in
+   Cursor (Settings → MCP) and the panel shows `Controlled by: cursor`.
 
 One sentence to verify (ask your agent):
 
 > Use browser_observe to look at the tabs open in my Chrome, then tell me their titles and URLs.
 
+Supported `--target` values: `cursor`, `claude-code`, `windsurf`, `copilot`,
+`copilot-insiders`, `codex`, `pi`, `claude-desktop`, `antigravity`, `devin`,
+`kimi`, `hermes`, `manual`. Run `npx -y @babtab/relay setup --help` for all
+commands (`--list-targets` prints one ready line per harness). No terminal at
+hand? Step 2 also offers *Pair & copy JSON manually* as a fallback.
+
 ## FAQ
 
-- **"Save & Connect" does nothing?** Check the relay terminal for `listening` first, then confirm the URL is `ws://127.0.0.1:3000` with a matching port.
-- **Pairing code expired?** Codes are short-lived — just hit "Copy config" again.
-- **Want a new token?** Re-running step 4 issues a new token; remember to update `mcp.json`.
-- **Agent and Chrome on different machines?** (Advanced) Put the relay on a VPS and change the Side Panel's Relay URL to your `wss://…`. The flow stays the same.
+- **"Save & Connect" does nothing?** Check the relay terminal for `listening` first, then confirm the Step 1 port matches the relay's port.
+- **Pairing code expired?** Codes are short-lived — just re-run the setup command.
+- **Want a new token?** Re-running the setup command issues a new token and rewrites the config (old `.bak` kept).
+- **Agent and Chrome on different machines?** (Advanced) Put the relay on a VPS, use *Advanced: custom Relay URL* in Side Panel Step 1 with your `wss://…`, and pass `--relay-url https://…` to the setup command. The flow stays the same.
 
 ## Privacy
 
@@ -95,9 +106,3 @@ One sentence to verify (ask your agent):
 ## Developers
 
 This repo only contains release artifacts (one obfuscated bundle + binaries), not the development source. Please file issues and discussions right here.
-
-## License
-
-Apache-2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
-
-Copyright 2026 Poseidoncode.
