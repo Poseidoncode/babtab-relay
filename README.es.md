@@ -95,3 +95,9 @@ Una frase para verificar (pídesela a tu agente):
 ## Desarrolladores
 
 Este repo solo contiene artefactos de release (un bundle ofuscado + binarios), no el código fuente de desarrollo. Abre issues y discusiones aquí mismo.
+
+## Licencia
+
+Apache-2.0 — ver [LICENSE](LICENSE) y [NOTICE](NOTICE).
+
+Copyright 2026 Poseidoncode.

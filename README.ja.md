@@ -95,3 +95,9 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 ## 開発者向け
 
 このリポジトリにはリリース成果物（難読化済みの単一バンドル＋実行ファイル）のみが含まれており、開発ソースは含まれません。Issue やディスカッションはこのリポジトリに直接お願いします。
+
+## ライセンス
+
+Apache-2.0 — [LICENSE](LICENSE) と [NOTICE](NOTICE) を参照。
+
+Copyright 2026 Poseidoncode.

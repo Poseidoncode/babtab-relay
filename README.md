@@ -95,3 +95,9 @@ One sentence to verify (ask your agent):
 ## Developers
 
 This repo only contains release artifacts (one obfuscated bundle + binaries), not the development source. Please file issues and discussions right here.
+
+## License
+
+Apache-2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+Copyright 2026 Poseidoncode.
