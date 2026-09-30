@@ -6,6 +6,20 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### 0.2.0 — automatic local onboarding (release candidate)
+
+- MCP-owned `stdio` bridge starts / reuses a local relay, reconnects after owner
+  exit, and stores credentials under `~/.babtab/` instead of the working directory.
+- Local `setup` now writes stdio config before any relay or browser connection
+  exists. Remote `--relay-url` setup keeps the HTTP pairing flow.
+- Tool discovery is immediate; browser calls remain gated by explicit pairing,
+  token scopes, and expiry. Interrupted actions are never replayed automatically.
+- Extension adds an Add to Cursor link, agent-first onboarding, and an alarm to
+  restore opted-in connections after service-worker suspension.
+- Publish `@babtab/relay@0.2.0` before releasing extension 0.2.0; its install
+  links and setup commands deliberately pin that version.
+
+
 ## [0.1.1] — 2026-09-29
 
 ### Security and compatibility

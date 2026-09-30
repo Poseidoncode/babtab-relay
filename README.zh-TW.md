@@ -9,91 +9,61 @@ Babtab Chrome 擴充功能的**本機中轉伺服器**：把你的 AI Agent（Cu
 
 MV3 擴充功能自己不能 listen port，所以需要這支小程式當橋樑。跑在 `localhost`，流量不出你的電腦；Relay 會在記憶體中轉發請求與結果（包含頁面觀察及截圖），不會儲存頁面內容。
 
-## 升級裝置驗證
+## 使用者快速開始（0.2.0）
 
-請一起更新 Relay 與擴充功能，重新載入擴充功能、在 Side Panel 重新連線，
-再為每個 Agent 執行一次步驟 2 配對。擴充功能會產生新的 `dev_v2_` 裝置 ID；
-舊 ID 的 token 無法控制新連線。Relay 現在明確只監聽 `127.0.0.1`；
-遠端部署需自行設定 `HOST`，並使用 TLS（`wss://`／`https://`）保護傳輸憑證。
+需要 Node.js 20+ 與對應新版外掛。一般使用者從 **Chrome Web Store 安裝 Babtab**；開發者模式只供本機測試。
 
-## 連線方式（3 個角色）
+1. 開啟 Babtab Side Panel，按 **Add to Cursor**。
+2. 在 Cursor 確認加入／啟用 Babtab；Cursor 自動啟動本機橋接程式。
+3. 回到外掛，確認工具名稱後按 **Approve**。
+4. 在一般網站分頁，對 AI 說 **Use babtab to observe the current tab**；需要網站授權時在外掛批准。
 
-```text
-AI Agent（Cursor / Pi …） ←→ Relay（本機 :3000） ←→ Chrome 擴充功能（含 Side Panel）
-     用 MCP 設定連過來              只做轉發與配對              真正在分頁上動手的人
-```
+不用先啟動 Relay、不用設定 port、不用保持終端機開啟。使用時保留 Chrome。
+首次 npm 下載需要網路；憑證固定保存在 `~/.babtab/`，更換工作目錄不影響連線。
 
-## 使用者快速開始（不用 clone、不用 install）
+### 其他 AI 工具
 
-### 步驟 1：安裝 Chrome 擴充功能
-
-`chrome://extensions` → 開啟**開發者模式** → **載入未封裝項目** → 選 `dist` 資料夾。
-
-> 上架 Chrome 商店後，這步會變成「去商店按安裝」。
-
-### 步驟 2：啟動 Relay（二選一，效果一樣）
+開啟 **Other AI tools / install with a command**，選工具並複製專屬指令：
 
 ```bash
-# A. 有 Node 20+ 的人：免安裝，直接跑
-npx @babtab/relay
-
-# B. 不想裝 Node 的人：去 GitHub Release 下載對應系統的執行檔
-./babtab-relay-darwin-arm64   # macOS Apple Silicon 為例
+npx -y @babtab/relay@0.2.0 setup --target windsurf --port 3000 --device <外掛提供的deviceId>
 ```
 
-看到以下訊息就是起來了（預設 port `3000`）：
+只需執行一次。指令保留其他 server、備份舊設定，寫入由 AI 工具自動啟動的 MCP 設定。
+接著重載／啟用 MCP，再回 Chrome 批准配對。
+自動啟動支援 Cursor、Claude Code、Windsurf、Copilot、Codex、Claude Desktop、Antigravity、Devin、Kimi、Hermes；Pi／Manual 沿用進階 HTTP 流程。
 
-```text
-[babtab-relay] listening on http://127.0.0.1:3000
-```
+### 自動啟動與重連
 
-進階用法（換 port、指定 token 存檔位置）：
+AI 工具啟動 `babtab-relay stdio --device … --client … --port 3000`，橋接程式啟動或重用本機 Relay。
+未配對時可列出工具，實際操作仍須人工批准。多個 AI 工具共用 Relay；持有 Relay 的工具結束後，剩餘工具會接手。
+中斷中的動作會回報錯誤，不會自動重送。
 
-```bash
-PORT=3001 npx @babtab/relay
-BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
-```
+自動模式的憑證保存在 `~/.babtab/`（可透過 `BABTAB_DATA_DIR` 覆寫）。
+重新開啟 Chrome／AI 工具後會自動重連。明確按 **Disconnect** 後，自動重連會停止，需再按 Reconnect。
 
-> `npx` 不是安裝，是「下載來跑一次」，關掉終端機就停了。
+### 從 0.1.x 升級
 
-### 步驟 3：擴充功能連上 Relay
+先關掉舊的手動 Relay，更新外掛，再重新加入 AI 工具並批准一次。
+自動模式使用新的固定憑證目錄。若 port 被其他服務或舊版 Relay 佔用，會顯示錯誤；
+可在 **Advanced connection settings** 換 port，再重新加入 AI 工具。
 
-1. 在 Chrome 開任意網站，點工具列的 Babtab 圖示開啟 **Side Panel**
-2. 步驟 1：確認 port（預設 `3000`，要跟 Relay 一致）即可，不用手打 URL
-3. 按 **"Save & Connect"**
+### 進階：手動或遠端 Relay
 
-這一步是把你的 Chrome 註冊成 Relay 上的一台 device。
-（Relay 在遠端 VPS？同一步有 *Advanced: custom Relay URL* 可填。）
+仍可執行 `npx @babtab/relay` 啟動獨立 HTTP Relay。
+外掛 **Advanced connection settings** 可設定 port／URL 並按 **Save & Connect**；也保留手動產生 HTTP 設定。
 
-### 步驟 4：AI Agent 連上 Relay（以 Cursor 為例）
+手動模式沿用 `BABTAB_TOKEN_FILE` 或啟動目錄的 `./data/relay-tokens.json`。
+遠端部署須明確設定 `HOST` 並使用 TLS（`wss://`／`https://`）；先讓外掛連上 Relay，
+再跑 `setup --target <tool> --relay-url https://… --device <id>`。
 
-1. 在 Side Panel 同一頁，步驟 2 → 按 **Cursor** → 複製那行指令：
+### 常見問題
 
-```bash
-npx -y @babtab/relay setup --target cursor --port 3000 --device <你的deviceId>
-```
-
-2. 貼到任意終端機執行，會顯示 6 位配對碼 → 回到 Side Panel 在頂部橫條按 **Approve**。
-3. 完成：指令會自動把 `babtab` 寫進 `~/.cursor/mcp.json`
-  （原有內容保留，舊檔留一份 `.bak`）。去 Cursor 重載 MCP（Settings → MCP），
-   Panel 出現 `Controlled by: cursor` 就通了。
-
-驗證一句話（在 Agent 裡下）：
-
-> 用 browser_observe 看我現在 Chrome 開的分頁，然後告訴我標題和網址
-
-支援的 `--target`：`cursor`、`claude-code`、`windsurf`、`copilot`、
-`copilot-insiders`、`codex`、`pi`、`claude-desktop`、`antigravity`、`devin`、
-`kimi`、`hermes`、`manual`。`npx -y @babtab/relay setup --help` 看完整說明
-（`--list-targets` 一次印出每個 harness 的現成指令）。沒終端機的環境，
-步驟 2 也有 *Pair & copy JSON manually* 可退回手動貼上。
-
-## 常見問題
-
-- **按 "Save & Connect"沒反應？** 先看 Relay 終端機有沒有 `listening`，再確認步驟 1 的 port 跟 Relay 一致。
-- **配對碼過期？** 配對碼只有短暫有效，超時就重跑一次 setup 指令。
-- **想換 token？** 重跑一次 setup 指令會產生新 token 並重寫設定（舊檔留 `.bak`）。
-- **Agent 跟 Chrome 不在同一台電腦？**（進階）把 Relay 放到 VPS 上，Side Panel 步驟 1 用 *Advanced: custom Relay URL* 填 `wss://…`，setup 指令加 `--relay-url https://…` 即可，流程不變。
+- **Cursor 沒開啟？** 展開按鈕下方的 setup 指令，執行一次，再重載／啟用 MCP。
+- **沒出現配對要求？** 確认 AI 工具的 PATH 找得到 Node 20+／`npx`，且 Babtab 已啟用；保持外掛面板開啟。MCP 日誌會顯示啟動錯誤。
+- **配對碼過期？** 保持 AI 工具執行，橋接程式會自動取得新碼。
+- **斷線？** 開啟 AI 工具和 Chrome；若先前主動 Disconnect，請在外掛按 Reconnect。
+- **憑證遺失或撤銷？** 重新批准配對；橋接程式不會跳過人工批准。
 
 ## 隱私說明
 

@@ -9,6 +9,12 @@ Babtab Chrome 확장 프로그램을 위한 **로컬 중계 서버**입니다. A
 
 MV3 확장 프로그램은 스스로 포트를 listen 할 수 없기 때문에, 이 작은 프로그램이 다리 역할을 합니다. `localhost`에서 동작하므로 트래픽이 컴퓨터 밖으로 나가지 않습니다. Relay는 요청과 결과를 메모리에서만 전달합니다(페이지 관찰 및 스크린샷 포함). 페이지 내용을 저장하지 않습니다.
 
+## 권장 설치 방법 (0.2.0)
+
+Node.js 20+가 필요합니다. Chrome 웹 스토어에서 확장 프로그램을 설치하고 Babtab의 **Add to Cursor**를 누르세요. Cursor에서 추가 / 활성화한 뒤 Chrome으로 돌아와 **Approve**를 누르세요. AI 도구가 Relay를 자동으로 실행하므로 터미널을 계속 열어 둘 필요가 없습니다. 다른 도구는 **Other AI tools / install with a command**에서 설정할 수 있습니다.
+
+전환 전에 기존 수동 Relay를 종료하세요. 자세한 내용은 [최신 가이드](README.md)를 참조하세요. 아래는 수동 HTTP 연결용 절차입니다.
+
 ## 인증된 디바이스 연결로 업그레이드
 
 Relay와 확장 프로그램을 함께 업데이트하고, 확장 프로그램을 새로고침한 뒤 Side Panel에서 다시 연결한 다음, 각 에이전트마다 2단계를 다시 실행하세요. 확장 프로그램이 새 `dev_v2_` 디바이스 ID를 생성합니다. 이전 ID에 연결된 토큰으로는 새 연결을 제어할 수 없습니다. Relay는 이제 명시적으로 `127.0.0.1`에만 바인딩됩니다. 원격 배포에서는 `HOST`를 직접 설정하고 TLS(`wss://` / `https://`)로 전송 중 인증 정보를 보호하세요.
@@ -67,7 +73,7 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 1. Side Panel 같은 페이지에서 2단계 → **Cursor** 클릭 → 한 줄 명령어를 복사:
 
 ```bash
-npx -y @babtab/relay setup --target cursor --port 3000 --device <내-디바이스-ID>
+npx -y @babtab/relay setup --target cursor --relay-url http://127.0.0.1:3000 --device <내-디바이스-ID>
 ```
 
 2. 아무 터미널에 붙여넣어 실행. 6자리 페어링 코드가 표시되면 Side Panel 상단 배너에서 **Approve(승인)** 클릭.

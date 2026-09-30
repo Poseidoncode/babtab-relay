@@ -9,6 +9,12 @@ Babtab Chrome 拡張機能のための**ローカル中継サーバー**です�
 
 MV3 の拡張機能は自分でポートを listen できないため、この小さなプログラムが橋渡しをします。`localhost` 上で動作するので、通信が PC の外に出ることはありません。Relay はリクエストと結果をメモリ上でのみ転送します（ページ観測やスクリーンショットを含みます）。ページ内容を保存することはありません。
 
+## 推奨セットアップ（0.2.0）
+
+Node.js 20+ が必要です。Chrome ウェブストアから拡張機能をインストールし、Babtab の **Add to Cursor** を押します。Cursor で追加・有効化し、Chrome に戻って **Approve** を押してください。Relay は AI ツールが自動起動するため、ターミナルを開いたままにする必要はありません。ほかの AI ツールは **Other AI tools / install with a command** から設定できます。
+
+旧版の手動 Relay を終了してから切り替えてください。詳細は [最新ガイド](README.md) を参照してください。以下は手動 HTTP 接続用の手順です。
+
 ## デバイス認証へのアップグレード
 
 Relay と拡張機能を一緒に更新し、拡張機能を再読み込みして Side Panel で再接続したうえで、各エージェントについてステップ 2 を再実行してください。拡張機能は新しい `dev_v2_` デバイス ID を生成します。古い ID に紐づくトークンでは新しい接続を操作できません。Relay は明示的に `127.0.0.1` にバインドするようになりました。リモート配置では `HOST` を指定し、TLS（`wss://`／`https://`）で転送中の認証情報を保護してください。
@@ -67,7 +73,7 @@ BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
 1. Side Panel の同じページでステップ 2 → **Cursor** をクリック → ワンライナーのコマンドをコピーします：
 
 ```bash
-npx -y @babtab/relay setup --target cursor --port 3000 --device <あなたのデバイスID>
+npx -y @babtab/relay setup --target cursor --relay-url http://127.0.0.1:3000 --device <あなたのデバイスID>
 ```
 
 2. 任意のターミナルに貼り付けて実行します。6 桁のペアリングコードが表示されるので、Side Panel 上部のバナーで **Approve（承認）**します。

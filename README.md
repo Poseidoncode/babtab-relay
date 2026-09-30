@@ -9,93 +9,51 @@ The **local relay server** for the Babtab Chrome extension: it connects your AI 
 
 MV3 extensions cannot listen on a port, so this tiny program acts as the bridge. It runs on `localhost`, so traffic never leaves your machine. The relay forwards requests and results in memory, including page observations and screenshots; it does not persist page content.
 
-## Upgrading to authenticated device connections
+## Quick start (0.2.0)
 
-Update the relay and extension together, reload the extension, reconnect in the
-Side Panel, and run Step 2 again for each agent. The extension creates a new
-`dev_v2_` device ID; tokens paired to older IDs do not control the new connection.
-The relay now binds `127.0.0.1` explicitly. A remote deployment must opt in with
-`HOST` and use TLS (`wss://` / `https://`) to protect credentials in transit.
+Requires Node.js 20+ and the matching Babtab extension. Install the extension from the **Chrome Web Store**; Developer mode is for local development only.
 
-## How it connects (3 roles)
+1. Open Babtab in Chrome and click **Add to Cursor**.
+2. Confirm Add / Enable in Cursor. Cursor starts the local bridge automatically.
+3. Return to Babtab and **Approve** the first connection.
+4. On a regular website, ask your agent: **Use babtab to observe the current tab**. Approve site access in Babtab if asked.
 
-```text
-AI agent (Cursor / Pi …) ←→ Relay (local :3000) ←→ Chrome extension (with Side Panel)
-   connects via MCP config     forwarding + pairing only    does the real work in your tabs
-```
+No separate relay command or terminal window is needed. Keep Chrome open.
+The first npm download requires internet access. Pairing credentials are stored in `~/.babtab/`, independent of your working directory.
 
-## Quick start (no clone, no install)
+### Other AI tools
 
-### Step 1: Install the Chrome extension
-
-`chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the `dist` folder.
-
-> Once published on the Chrome Web Store, this step becomes "install from the store".
-
-### Step 2: Start the relay (pick one, same result)
+Open **Other AI tools / install with a command**, choose your tool and copy its personalized command:
 
 ```bash
-# A. Have Node 20+? No install needed, just run:
-npx @babtab/relay
-
-# B. No Node? Download the binary for your OS from GitHub Releases:
-./babtab-relay-darwin-arm64   # e.g. macOS Apple Silicon
+npx -y @babtab/relay@0.2.0 setup --target windsurf --port 3000 --device <device-id-from-extension>
 ```
 
-You're up when you see (default port `3000`):
+Run once, enable / reload MCP in your AI tool, then approve in Chrome. Setup preserves other servers and backs up existing config files. Supported automatic targets: Cursor, Claude Code, Windsurf, Copilot, Codex, Claude Desktop, Antigravity, Devin, Kimi and Hermes. Pi / Manual use the advanced HTTP flow.
 
-```text
-[babtab-relay] listening on http://127.0.0.1:3000
-```
+### How automatic startup works
 
-Advanced (custom port / token file location):
+Your MCP client launches `babtab-relay stdio --device … --client … --port 3000`. The bridge starts or reuses the loopback relay. Tool discovery works before approval; browser operations require an explicitly approved token. Multiple clients share the relay; a remaining client takes over if its owner exits. In-flight actions interrupted by shutdown return an error and are never replayed automatically.
 
-```bash
-PORT=3001 npx @babtab/relay
-BABTAB_TOKEN_FILE=~/.babtab/relay-tokens.json npx @babtab/relay
-```
+Credentials live in `~/.babtab/` (override with `BABTAB_DATA_DIR`). The extension reconnects after browser / MCP restarts. Explicit **Disconnect** stops automatic reconnection until you reconnect.
 
-> `npx` doesn't install anything — it downloads and runs once. Closing the terminal stops the relay.
+### Upgrading from 0.1.x
 
-### Step 3: Connect the extension to the relay
+Stop the manually started relay, update the extension and add your AI tool again. Approve once to pair with the new managed credentials. Port conflicts or an older relay are reported without sending credentials to the conflicting service. Choose a different port under **Advanced connection settings** and reinstall the MCP entry if needed.
 
-1. Open any website in Chrome, click the Babtab toolbar icon to open the **Side Panel**
-2. Step 1: confirm the port (default `3000`, must match the relay) — no URL typing needed
-3. Click **"Save & Connect"**
+### Advanced: manual or remote relay
 
-This registers your Chrome as a device on the relay.
-(Remote relay on a VPS? Use *Advanced: custom Relay URL* in the same step.)
+`npx @babtab/relay` still starts a standalone HTTP relay. In the extension, open **Advanced connection settings**, set the port / URL and use **Save & Connect**. Manual HTTP config generation remains available.
 
-### Step 4: Connect your AI agent to the relay (Cursor as example)
+Standalone token storage uses `BABTAB_TOKEN_FILE` or `./data/relay-tokens.json` relative to the launch directory. Remote relays need an explicit `HOST` and TLS (`wss://` / `https://`). Use `setup --target <tool> --relay-url https://… --device <id>` after the relay and extension are connected.
 
-1. On the same Side Panel page, Step 2 → click **Cursor** → copy the one-line command:
+### Troubleshooting
 
-```bash
-npx -y @babtab/relay setup --target cursor --port 3000 --device <your-device-id>
-```
-
-2. Paste it into any terminal and run it. It shows a 6-digit pairing code —
-   approve it on the banner at the top of the Side Panel.
-3. Done: the command writes `babtab` into `~/.cursor/mcp.json` for you
-   (existing entries preserved, previous file kept as `.bak`). Reload MCP in
-   Cursor (Settings → MCP) and the panel shows `Controlled by: cursor`.
-
-One sentence to verify (ask your agent):
-
-> Use browser_observe to look at the tabs open in my Chrome, then tell me their titles and URLs.
-
-Supported `--target` values: `cursor`, `claude-code`, `windsurf`, `copilot`,
-`copilot-insiders`, `codex`, `pi`, `claude-desktop`, `antigravity`, `devin`,
-`kimi`, `hermes`, `manual`. Run `npx -y @babtab/relay setup --help` for all
-commands (`--list-targets` prints one ready line per harness). No terminal at
-hand? Step 2 also offers *Pair & copy JSON manually* as a fallback.
-
-## FAQ
-
-- **"Save & Connect" does nothing?** Check the relay terminal for `listening` first, then confirm the Step 1 port matches the relay's port.
-- **Pairing code expired?** Codes are short-lived — just re-run the setup command.
-- **Want a new token?** Re-running the setup command issues a new token and rewrites the config (old `.bak` kept).
-- **Agent and Chrome on different machines?** (Advanced) Put the relay on a VPS, use *Advanced: custom Relay URL* in Side Panel Step 1 with your `wss://…`, and pass `--relay-url https://…` to the setup command. The flow stays the same.
+- **Cursor did not open?** Use the setup command under the button, then reload / enable MCP.
+- **No pairing request?** Check that Node 20+ / `npx` is on your AI tool's PATH and Babtab is enabled. Keep the Chrome panel open. The MCP server's stderr logs explain startup problems.
+- **Pairing expired?** Keep the AI tool running; it requests a new code automatically.
+- **Connection stopped?** Reopen your AI tool and Chrome. If you explicitly disconnected, press Reconnect in Babtab.
+- **Lost / revoked credentials?** Approve the new pairing request; the bridge never bypasses browser approval.
 
 ## Privacy
 

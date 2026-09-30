@@ -9,6 +9,12 @@ El **servidor relay local** para la extensión Babtab de Chrome: conecta tu agen
 
 Las extensiones MV3 no pueden escuchar en un puerto, así que este pequeño programa actúa como puente. Se ejecuta en `localhost`, por lo que el tráfico nunca sale de tu máquina. El relay reenvía solicitudes y resultados solo en memoria (incluidas observaciones de página y capturas); no almacena el contenido de las páginas.
 
+## Instalación recomendada (0.2.0)
+
+Requiere Node.js 20+. Instala la extensión desde Chrome Web Store y pulsa **Add to Cursor** en Babtab. Confirma y activa Babtab en Cursor, vuelve a Chrome y pulsa **Approve**. Tu herramienta de IA inicia el relay automáticamente; no necesitas mantener una terminal abierta. Para otras herramientas, usa **Other AI tools / install with a command**.
+
+Detén el relay manual anterior antes de cambiar. Consulta la [guía actualizada](README.md). Las instrucciones siguientes corresponden a la conexión HTTP manual.
+
 ## Actualización a conexiones de dispositivo autenticadas
 
 Actualiza el relay y la extensión juntos, recarga la extensión, reconecta en el Side Panel y repite el paso 2 para cada agente. La extensión genera un nuevo ID de dispositivo `dev_v2_`; los tokens vinculados a IDs anteriores ya no controlan la nueva conexión. El relay ahora se vincula explícitamente a `127.0.0.1`. En despliegues remotos debes configurar `HOST` y usar TLS (`wss://` / `https://`) para proteger las credenciales en tránsito.
@@ -67,7 +73,7 @@ Esto registra tu Chrome como un dispositivo en el relay.
 1. En la misma página del Side Panel, paso 2 → haz clic en **Cursor** → copia el comando de una línea:
 
 ```bash
-npx -y @babtab/relay setup --target cursor --port 3000 --device <tu-device-id>
+npx -y @babtab/relay setup --target cursor --relay-url http://127.0.0.1:3000 --device <tu-device-id>
 ```
 
 2. Pégalo en cualquier terminal y ejecútalo. Mostrará un código de emparejamiento
