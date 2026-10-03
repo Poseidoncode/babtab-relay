@@ -9,9 +9,9 @@ Babtab Chrome 확장 프로그램을 위한 **로컬 중계 서버**입니다. A
 
 MV3 확장 프로그램은 스스로 포트를 listen 할 수 없기 때문에, 이 작은 프로그램이 다리 역할을 합니다. `localhost`에서 동작하므로 트래픽이 컴퓨터 밖으로 나가지 않습니다. Relay는 요청과 결과를 메모리에서만 전달합니다(페이지 관찰 및 스크린샷 포함). 페이지 내용을 저장하지 않습니다.
 
-## 권장 설치 방법 (0.2.0)
+## 권장 설치 방법 (0.3.0)
 
-Node.js 20+가 필요합니다. Chrome 웹 스토어에서 확장 프로그램을 설치하고 Babtab의 **Add to Cursor**를 누르세요. Cursor에서 추가 / 활성화한 뒤 Chrome으로 돌아와 **Approve**를 누르세요. AI 도구가 Relay를 자동으로 실행하므로 터미널을 계속 열어 둘 필요가 없습니다. 다른 도구는 **Other AI tools / install with a command**에서 설정할 수 있습니다.
+Node.js 20+가 필요합니다. Chrome 웹 스토어에서 확장 프로그램을 설치하고 Babtab의 **Add to Cursor** / **Add to VS Code** / **Add to Hermes** 등 원클릭 버튼을 누르세요(**Add to Codex** / **Add to Antigravity**는 설치 스니펫 복사입니다). Cursor에서 추가 / 활성화한 뒤 Chrome으로 돌아와 **Approve**를 누르세요. AI 도구가 Relay를 자동으로 실행하므로 터미널을 계속 열어 둘 필요가 없습니다. 다른 도구는 **Other AI tools / install with a command**에서 설정할 수 있습니다.
 
 전환 전에 기존 수동 Relay를 종료하세요. 자세한 내용은 [최신 가이드](README.md)를 참조하세요. 아래는 수동 HTTP 연결용 절차입니다.
 

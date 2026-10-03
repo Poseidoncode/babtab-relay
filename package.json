@@ -1,6 +1,6 @@
 {
   "name": "@babtab/relay",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Babtab local relay: auth, pairing, WSS routing, Streamable HTTP MCP for the Babtab Chrome extension. No DOM, no grounding, no page storage.",
   "type": "module",
   "bin": {

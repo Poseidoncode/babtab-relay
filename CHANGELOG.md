@@ -6,7 +6,39 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### 0.2.0 — automatic local onboarding (release candidate)
+## [0.3.0] — 2026-10-03
+
+### Added
+
+- Multitab tools: `browser_tabs`, `browser_switch_tab`, `browser_open_tab`,
+  `browser_close_tab` (session-scoped; close only touches tabs the session controls).
+- `browser_assert`: structured QA assertions over live elements
+  (exists / not_exists / text_contains / text_equals / count / visible /
+  value_equals / checked). Never throws — failures return ok:false with actuals.
+- `browser_extract`: schema-first extraction via fields[].
+- Richer target queries: `label`, `placeholder`, and `text` matching plus `nth`
+  ordinal selection and `near` proximity hints; documented postcondition
+  vocabulary (`element_appeared` / `element_disappeared` are delta checks
+  against a pre-dispatch snapshot).
+- Token accounting helpers shared by extension and relay (chars/4 estimator,
+  stable JSON sizing for prompt-cache friendliness).
+- One-click install for Hermes Desktop (`hermes://mcp/install` deeplink);
+  one-click copy installers for Codex (`codex mcp add` — the desktop app
+  shares the CLI config) and Antigravity (mcp_config.json snippet).
+- Protocol unit tests (14) covering the shared extension↔relay contract.
+
+### Changed
+
+- Install links and setup commands pin `@babtab/relay@0.3.0`.
+  **Update the relay and extension together** — 0.3.0 pairs with extension 0.3.0.
+
+### Fixed
+
+- Audit-index crash on malformed input.
+
+## [0.2.0] — 2026-09-30
+
+### Automatic local onboarding
 
 - MCP-owned `stdio` bridge starts / reuses a local relay, reconnects after owner
   exit, and stores credentials under `~/.babtab/` instead of the working directory.
