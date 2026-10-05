@@ -5,13 +5,15 @@
 [![版本](https://img.shields.io/npm/v/@babtab/relay.svg)](https://www.npmjs.com/package/@babtab/relay)
 [![授權](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
-Babtab Chrome 擴充功能的**本機中轉伺服器**：把你的 AI Agent（Cursor / Pi / Claude Code / …）接到你真正的 Chrome 上。
+> **需要先安裝 Babtab 外掛：**[從 Chrome 線上應用程式商店安裝 Babtab](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)
+
+[Babtab Chrome 擴充功能](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)的**本機中轉伺服器**：把你的 AI Agent（Cursor / Pi / Claude Code / …）接到你真正的 Chrome 上。
 
 MV3 擴充功能自己不能 listen port，所以需要這支小程式當橋樑。跑在 `localhost`，流量不出你的電腦；Relay 會在記憶體中轉發請求與結果（包含頁面觀察及截圖），不會儲存頁面內容。
 
-## 使用者快速開始（0.3.0）
+## 使用者快速開始（0.3.1）
 
-需要 Node.js 20+ 與對應新版外掛。一般使用者從 **Chrome Web Store 安裝 Babtab**；開發者模式只供本機測試。
+需要 Node.js 20+ 與對應新版外掛。一般使用者從 **[Chrome Web Store 安裝 Babtab](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)**；開發者模式只供本機測試。
 
 1. 開啟 Babtab Side Panel，按 **Add to Cursor**（或 **Add to VS Code**／**VS Code Insiders**／**Add to Hermes**，都是一鍵安裝）。
 2. 在 AI 工具確認加入／啟用 Babtab；它會自動啟動本機橋接程式。**Add to Codex**／**Add to Antigravity** 則是一鍵複製安裝片段（Codex：貼上終端機執行，桌機版共用設定；Antigravity：貼進 mcp_config.json 後重啟 IDE）。
@@ -26,7 +28,7 @@ MV3 擴充功能自己不能 listen port，所以需要這支小程式當橋樑�
 開啟 **Other AI tools / install with a command**，選工具並複製專屬指令：
 
 ```bash
-npx -y @babtab/relay@0.3.0 setup --target windsurf --port 3000 --device <外掛提供的deviceId>
+npx -y @babtab/relay@0.3.1 setup --target windsurf --port 3000 --device <外掛提供的deviceId>
 ```
 
 只需執行一次。指令保留其他 server、備份舊設定，寫入由 AI 工具自動啟動的 MCP 設定。

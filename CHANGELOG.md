@@ -6,6 +6,17 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-10-05
+
+### Changed
+
+- Docs: link the published Chrome Web Store listing
+  (https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)
+  from all 7 READMEs and the privacy page footer; replaced the outdated
+  "Load unpacked / pending store publication" steps with store install.
+  No code changes — still pairs with extension 0.3.0; no re-pairing needed.
+- Install links and setup commands pin `@babtab/relay@0.3.1`.
+
 ## [0.3.0] — 2026-10-03
 
 ### Added

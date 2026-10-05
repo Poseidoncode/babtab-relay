@@ -5,13 +5,15 @@
 [![संस्करण](https://img.shields.io/npm/v/@babtab/relay.svg)](https://www.npmjs.com/package/@babtab/relay)
 [![लाइसेंस](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
-Babtab Chrome एक्सटेंशन के लिए **लोकल relay सर्वर**: यह आपके AI एजेंट (Cursor / Pi / Claude Code / …) को आपके असली Chrome से जोड़ता है।
+> **Babtab एक्सटेंशन आवश्यक है:** [Chrome Web Store से Babtab इंस्टॉल करें](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)
+
+[Babtab Chrome एक्सटेंशन](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb) के लिए **लोकल relay सर्वर**: यह आपके AI एजेंट (Cursor / Pi / Claude Code / …) को आपके असली Chrome से जोड़ता है।
 
 MV3 एक्सटेंशन स्वयं किसी पोर्ट पर listen नहीं कर सकते, इसलिए यह छोटा प्रोग्राम bridge का काम करता है। यह `localhost` पर चलता है, इसलिए ट्रैफ़िक आपकी मशीन से बाहर कभी नहीं जाता। Relay अनुरोध और परिणाम सिर्फ़ मेमोरी में आगे बढ़ाता है (पेज अवलोकन और स्क्रीनशॉट सहित); यह पेज सामग्री को store नहीं करता।
 
-## अनुशंसित सेटअप (0.3.0)
+## अनुशंसित सेटअप (0.3.1)
 
-Node.js 20+ आवश्यक है। Chrome Web Store से एक्सटेंशन इंस्टॉल करें और Babtab में **Add to Cursor** / **Add to VS Code** / **Add to Hermes** जैसे वन-क्लिक बटन दबाएँ (**Add to Codex** / **Add to Antigravity** इंस्टॉल स्निपेट कॉपी करते हैं)। Cursor में जोड़ने और सक्षम करने की पुष्टि करें, फिर Chrome में लौटकर **Approve** दबाएँ। AI टूल Relay को अपने आप शुरू करता है; टर्मिनल खुला रखने की जरूरत नहीं है। अन्य टूल के लिए **Other AI tools / install with a command** चुनें।
+Node.js 20+ आवश्यक है। [Chrome Web Store से एक्सटेंशन इंस्टॉल करें](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb) और Babtab में **Add to Cursor** / **Add to VS Code** / **Add to Hermes** जैसे वन-क्लिक बटन दबाएँ (**Add to Codex** / **Add to Antigravity** इंस्टॉल स्निपेट कॉपी करते हैं)। Cursor में जोड़ने और सक्षम करने की पुष्टि करें, फिर Chrome में लौटकर **Approve** दबाएँ। AI टूल Relay को अपने आप शुरू करता है; टर्मिनल खुला रखने की जरूरत नहीं है। अन्य टूल के लिए **Other AI tools / install with a command** चुनें।
 
 बदलने से पहले पुराना मैन्युअल Relay बंद करें। [नवीनतम गाइड](README.md) देखें। नीचे दिए गए निर्देश मैन्युअल HTTP कनेक्शन के लिए हैं।
 
@@ -30,9 +32,9 @@ AI एजेंट (Cursor / Pi …) ←→ Relay (लोकल :3000) ←→ Ch
 
 ### चरण 1: Chrome एक्सटेंशन इंस्टॉल करें
 
-`chrome://extensions` → **Developer mode** चालू करें → **Load unpacked** → `dist` फ़ोल्डर चुनें।
+[Chrome Web Store से Babtab इंस्टॉल करें](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)।
 
-> Chrome Web Store पर प्रकाशित होने के बाद यह चरण "स्टोर से इंस्टॉल करें" हो जाएगा।
+> Developer mode / Load unpacked सिर्फ़ स्थानीय विकास के लिए है।
 
 ### चरण 2: Relay शुरू करें (कोई एक चुनें, परिणाम समान)
 

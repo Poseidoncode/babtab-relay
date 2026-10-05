@@ -5,13 +5,15 @@
 [![Versión](https://img.shields.io/npm/v/@babtab/relay.svg)](https://www.npmjs.com/package/@babtab/relay)
 [![Licencia](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
-El **servidor relay local** para la extensión Babtab de Chrome: conecta tu agente de IA (Cursor / Pi / Claude Code / …) con tu Chrome real.
+> **Requiere la extensión Babtab:** [Instalar Babtab desde Chrome Web Store](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)
+
+El **servidor relay local** para la [extensión Babtab de Chrome](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb): conecta tu agente de IA (Cursor / Pi / Claude Code / …) con tu Chrome real.
 
 Las extensiones MV3 no pueden escuchar en un puerto, así que este pequeño programa actúa como puente. Se ejecuta en `localhost`, por lo que el tráfico nunca sale de tu máquina. El relay reenvía solicitudes y resultados solo en memoria (incluidas observaciones de página y capturas); no almacena el contenido de las páginas.
 
-## Instalación recomendada (0.3.0)
+## Instalación recomendada (0.3.1)
 
-Requiere Node.js 20+. Instala la extensión desde Chrome Web Store y pulsa **Add to Cursor** / **Add to VS Code** / **Add to Hermes** (botones de un clic) en Babtab; **Add to Codex** / **Add to Antigravity** copian un fragmento de instalación. Confirma y activa Babtab en Cursor, vuelve a Chrome y pulsa **Approve**. Tu herramienta de IA inicia el relay automáticamente; no necesitas mantener una terminal abierta. Para otras herramientas, usa **Other AI tools / install with a command**.
+Requiere Node.js 20+. Instala la extensión desde [Chrome Web Store](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb) y pulsa **Add to Cursor** / **Add to VS Code** / **Add to Hermes** (botones de un clic) en Babtab; **Add to Codex** / **Add to Antigravity** copian un fragmento de instalación. Confirma y activa Babtab en Cursor, vuelve a Chrome y pulsa **Approve**. Tu herramienta de IA inicia el relay automáticamente; no necesitas mantener una terminal abierta. Para otras herramientas, usa **Other AI tools / install with a command**.
 
 Detén el relay manual anterior antes de cambiar. Consulta la [guía actualizada](README.md). Las instrucciones siguientes corresponden a la conexión HTTP manual.
 
@@ -30,9 +32,9 @@ Agente de IA (Cursor / Pi …) ←→ Relay (local :3000) ←→ Extensión de C
 
 ### Paso 1: Instala la extensión de Chrome
 
-`chrome://extensions` → activa el **modo de desarrollador** → **Cargar descomprimida** → selecciona la carpeta `dist`.
+[Instala Babtab desde Chrome Web Store](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb).
 
-> Cuando se publique en la Chrome Web Store, este paso será "instalar desde la tienda".
+> El modo de desarrollador / Cargar descomprimida es solo para desarrollo local.
 
 ### Paso 2: Inicia el relay (elige una, mismo resultado)
 

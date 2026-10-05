@@ -5,13 +5,15 @@
 [![バージョン](https://img.shields.io/npm/v/@babtab/relay.svg)](https://www.npmjs.com/package/@babtab/relay)
 [![ライセンス](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
-Babtab Chrome 拡張機能のための**ローカル中継サーバー**です。あなたの AI エージェント（Cursor / Pi / Claude Code / …）を、実際の Chrome につなぎます。
+> **Babtab 拡張機能が必要です：**[Chrome ウェブストアから Babtab をインストール](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)
+
+[Babtab Chrome 拡張機能](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)のための**ローカル中継サーバー**です。あなたの AI エージェント（Cursor / Pi / Claude Code / …）を、実際の Chrome につなぎます。
 
 MV3 の拡張機能は自分でポートを listen できないため、この小さなプログラムが橋渡しをします。`localhost` 上で動作するので、通信が PC の外に出ることはありません。Relay はリクエストと結果をメモリ上でのみ転送します（ページ観測やスクリーンショットを含みます）。ページ内容を保存することはありません。
 
-## 推奨セットアップ（0.3.0）
+## 推奨セットアップ（0.3.1）
 
-Node.js 20+ が必要です。Chrome ウェブストアから拡張機能をインストールし、Babtab の **Add to Cursor**／**Add to VS Code**／**Add to Hermes** などのワンクリックボタンを押します（**Add to Codex**／**Add to Antigravity** はインストール用スニペットのコピーです）。Cursor で追加・有効化し、Chrome に戻って **Approve** を押してください。Relay は AI ツールが自動起動するため、ターミナルを開いたままにする必要はありません。ほかの AI ツールは **Other AI tools / install with a command** から設定できます。
+Node.js 20+ が必要です。[Chrome ウェブストアから拡張機能をインストール](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)し、Babtab の **Add to Cursor**／**Add to VS Code**／**Add to Hermes** などのワンクリックボタンを押します（**Add to Codex**／**Add to Antigravity** はインストール用スニペットのコピーです）。Cursor で追加・有効化し、Chrome に戻って **Approve** を押してください。Relay は AI ツールが自動起動するため、ターミナルを開いたままにする必要はありません。ほかの AI ツールは **Other AI tools / install with a command** から設定できます。
 
 旧版の手動 Relay を終了してから切り替えてください。詳細は [最新ガイド](README.md) を参照してください。以下は手動 HTTP 接続用の手順です。
 
@@ -30,9 +32,9 @@ AI エージェント（Cursor / Pi …） ←→ Relay（ローカル :3000） 
 
 ### ステップ 1：Chrome 拡張機能をインストール
 
-`chrome://extensions` → **デベロッパーモード**を有効化 → **パッケージ化されていない拡張機能を読み込む** → `dist` フォルダを選択。
+[Chrome ウェブストアから Babtab をインストール](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)してください。
 
-> Chrome ウェブストア公開後は、この手順は「ストアからインストール」に変わります。
+> デベロッパーモード / パッケージ化されていない拡張機能の読み込みはローカル開発用です。
 
 ### ステップ 2：Relay を起動する（どちらか一方、結果は同じ）
 

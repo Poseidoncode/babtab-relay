@@ -5,13 +5,15 @@
 [![Version](https://img.shields.io/npm/v/@babtab/relay.svg)](https://www.npmjs.com/package/@babtab/relay)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
-The **local relay server** for the Babtab Chrome extension: it connects your AI agent (Cursor / Pi / Claude Code / …) to your real Chrome.
+> **Requires the Babtab extension:** [Install Babtab from the Chrome Web Store](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)
+
+The **local relay server** for the [Babtab Chrome extension](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb): it connects your AI agent (Cursor / Pi / Claude Code / …) to your real Chrome.
 
 MV3 extensions cannot listen on a port, so this tiny program acts as the bridge. It runs on `localhost`, so traffic never leaves your machine. The relay forwards requests and results in memory, including page observations and screenshots; it does not persist page content.
 
-## Quick start (0.3.0)
+## Quick start (0.3.1)
 
-Requires Node.js 20+ and the matching Babtab extension. Install the extension from the **Chrome Web Store**; Developer mode is for local development only.
+Requires Node.js 20+ and the matching [Babtab extension](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb). Install the extension from the [**Chrome Web Store**](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb); Developer mode is for local development only.
 
 1. Open Babtab in Chrome and click **Add to Cursor** (or **Add to VS Code** / **VS Code Insiders** / **Add to Hermes** — all one-click).
 2. Confirm Add / Enable in your AI tool. It starts the local bridge automatically. **Add to Codex** / **Add to Antigravity** copy a one-step install snippet instead (Codex: paste in a terminal — the desktop app shares the CLI config; Antigravity: paste into mcp_config.json and restart the IDE).
@@ -26,7 +28,7 @@ The first npm download requires internet access. Pairing credentials are stored 
 Open **Other AI tools / install with a command**, choose your tool and copy its personalized command:
 
 ```bash
-npx -y @babtab/relay@0.3.0 setup --target windsurf --port 3000 --device <device-id-from-extension>
+npx -y @babtab/relay@0.3.1 setup --target windsurf --port 3000 --device <device-id-from-extension>
 ```
 
 Run once, enable / reload MCP in your AI tool, then approve in Chrome. Setup preserves other servers and backs up existing config files. Supported automatic targets: Cursor, Claude Code, Windsurf, Copilot, Codex, Claude Desktop, Antigravity, Devin, Kimi and Hermes. Pi / Manual use the advanced HTTP flow.
