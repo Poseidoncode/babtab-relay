@@ -11,7 +11,7 @@
 
 MV3 एक्सटेंशन स्वयं किसी पोर्ट पर listen नहीं कर सकते, इसलिए यह छोटा प्रोग्राम bridge का काम करता है। यह `localhost` पर चलता है, इसलिए ट्रैफ़िक आपकी मशीन से बाहर कभी नहीं जाता। Relay अनुरोध और परिणाम सिर्फ़ मेमोरी में आगे बढ़ाता है (पेज अवलोकन और स्क्रीनशॉट सहित); यह पेज सामग्री को store नहीं करता।
 
-## अनुशंसित सेटअप (0.3.2)
+## अनुशंसित सेटअप (0.3.3)
 
 Node.js 20+ आवश्यक है। [Chrome Web Store से एक्सटेंशन इंस्टॉल करें](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb) और Babtab में **Add to Cursor** / **Add to VS Code** / **Add to Hermes** जैसे वन-क्लिक बटन दबाएँ (**Add to Codex** / **Add to Antigravity** इंस्टॉल स्निपेट कॉपी करते हैं)। Cursor में जोड़ने और सक्षम करने की पुष्टि करें, फिर Chrome में लौटकर **Approve** दबाएँ। AI टूल Relay को अपने आप शुरू करता है; टर्मिनल खुला रखने की जरूरत नहीं है। अन्य टूल के लिए **Other AI tools / install with a command** चुनें।
 

@@ -11,7 +11,7 @@ El **servidor relay local** para la [extensión Babtab de Chrome](https://chrome
 
 Las extensiones MV3 no pueden escuchar en un puerto, así que este pequeño programa actúa como puente. Se ejecuta en `localhost`, por lo que el tráfico nunca sale de tu máquina. El relay reenvía solicitudes y resultados solo en memoria (incluidas observaciones de página y capturas); no almacena el contenido de las páginas.
 
-## Instalación recomendada (0.3.2)
+## Instalación recomendada (0.3.3)
 
 Requiere Node.js 20+. Instala la extensión desde [Chrome Web Store](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb) y pulsa **Add to Cursor** / **Add to VS Code** / **Add to Hermes** (botones de un clic) en Babtab; **Add to Codex** / **Add to Antigravity** copian un fragmento de instalación. Confirma y activa Babtab en Cursor, vuelve a Chrome y pulsa **Approve**. Tu herramienta de IA inicia el relay automáticamente; no necesitas mantener una terminal abierta. Para otras herramientas, usa **Other AI tools / install with a command**.
 

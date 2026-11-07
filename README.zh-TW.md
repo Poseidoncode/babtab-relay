@@ -11,7 +11,7 @@
 
 MV3 擴充功能自己不能 listen port，所以需要這支小程式當橋樑。跑在 `localhost`，流量不出你的電腦；Relay 會在記憶體中轉發請求與結果（包含頁面觀察及截圖），不會儲存頁面內容。
 
-## 使用者快速開始（0.3.2）
+## 使用者快速開始（0.3.3）
 
 需要 Node.js 20+ 與對應新版外掛。一般使用者從 **[Chrome Web Store 安裝 Babtab](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)**；開發者模式只供本機測試。
 
@@ -28,12 +28,12 @@ MV3 擴充功能自己不能 listen port，所以需要這支小程式當橋樑�
 開啟 **Other AI tools / install with a command**，選工具並複製專屬指令：
 
 ```bash
-npx -y @babtab/relay@0.3.2 setup --target windsurf --port 3000 --device <外掛提供的deviceId>
+npx -y @babtab/relay@0.3.3 setup --target windsurf --port 3000 --device <外掛提供的deviceId>
 ```
 
 只需執行一次。指令保留其他 server、備份舊設定，寫入由 AI 工具自動啟動的 MCP 設定。
 接著重載／啟用 MCP，再回 Chrome 批准配對。
-自動啟動支援 Cursor、Claude Code、Windsurf、Copilot、Codex、Claude Desktop、Antigravity、Devin、Kimi、Hermes；Pi／Manual 沿用進階 HTTP 流程。
+自動啟動支援 Cursor、Claude Code、Windsurf、Copilot、Codex、Pi、Claude Desktop、Antigravity、Devin、Kimi、Hermes。Pi 使用原生 MCP 設定檔 `~/.pi/agent/mcp.json`；在 Pi 執行 `/reload` 或重新啟動即可。Manual／Other 沿用進階 HTTP 流程。
 
 ### 自動啟動與重連
 

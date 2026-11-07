@@ -11,7 +11,7 @@
 
 MV3 の拡張機能は自分でポートを listen できないため、この小さなプログラムが橋渡しをします。`localhost` 上で動作するので、通信が PC の外に出ることはありません。Relay はリクエストと結果をメモリ上でのみ転送します（ページ観測やスクリーンショットを含みます）。ページ内容を保存することはありません。
 
-## 推奨セットアップ（0.3.2）
+## 推奨セットアップ（0.3.3）
 
 Node.js 20+ が必要です。[Chrome ウェブストアから拡張機能をインストール](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)し、Babtab の **Add to Cursor**／**Add to VS Code**／**Add to Hermes** などのワンクリックボタンを押します（**Add to Codex**／**Add to Antigravity** はインストール用スニペットのコピーです）。Cursor で追加・有効化し、Chrome に戻って **Approve** を押してください。Relay は AI ツールが自動起動するため、ターミナルを開いたままにする必要はありません。ほかの AI ツールは **Other AI tools / install with a command** から設定できます。
 

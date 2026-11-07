@@ -6,6 +6,12 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.3] — 2026-11-07
+
+### Added
+
+- Pi now uses native MCP setup via `~/.pi/agent/mcp.json` and the managed stdio bridge; reload Pi with `/reload` or restart it to connect.
+
 ## [0.3.2] — 2026-11-07
 
 ### Fixed

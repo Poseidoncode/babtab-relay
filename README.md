@@ -11,7 +11,7 @@ The **local relay server** for the [Babtab Chrome extension](https://chromewebst
 
 MV3 extensions cannot listen on a port, so this tiny program acts as the bridge. It runs on `localhost`, so traffic never leaves your machine. The relay forwards requests and results in memory, including page observations and screenshots; it does not persist page content.
 
-## Quick start (0.3.2)
+## Quick start (0.3.3)
 
 Requires Node.js 20+ and the matching [Babtab extension](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb). Install the extension from the [**Chrome Web Store**](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb); Developer mode is for local development only.
 
@@ -28,10 +28,10 @@ The first npm download requires internet access (cold start can take a minute). 
 Open **Other AI tools / install with a command**, choose your tool and copy its personalized command:
 
 ```bash
-npx -y @babtab/relay@0.3.2 setup --target windsurf --port 3000 --device <device-id-from-extension>
+npx -y @babtab/relay@0.3.3 setup --target windsurf --port 3000 --device <device-id-from-extension>
 ```
 
-Run once, enable / reload MCP in your AI tool, then approve in Chrome. Setup preserves other servers and backs up existing config files. Supported automatic targets: Cursor, Claude Code, Windsurf, Copilot, Codex, Claude Desktop, Antigravity, Devin, Kimi and Hermes. Pi / Manual use the advanced HTTP flow.
+Run once, enable / reload MCP in your AI tool, then approve in Chrome. Setup preserves other servers and backs up existing config files. Supported automatic targets: Cursor, Claude Code, Windsurf, Copilot, Codex, Pi, Claude Desktop, Antigravity, Devin, Kimi and Hermes. Pi uses native MCP config at `~/.pi/agent/mcp.json`; run `/reload` in Pi or restart it. Manual / Other uses the advanced HTTP flow.
 
 ### How automatic startup works
 
