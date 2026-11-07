@@ -11,7 +11,7 @@
 
 MV3 擴充功能自己不能 listen port，所以需要這支小程式當橋樑。跑在 `localhost`，流量不出你的電腦；Relay 會在記憶體中轉發請求與結果（包含頁面觀察及截圖），不會儲存頁面內容。
 
-## 使用者快速開始（0.3.1）
+## 使用者快速開始（0.3.2）
 
 需要 Node.js 20+ 與對應新版外掛。一般使用者從 **[Chrome Web Store 安裝 Babtab](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb)**；開發者模式只供本機測試。
 
@@ -21,14 +21,14 @@ MV3 擴充功能自己不能 listen port，所以需要這支小程式當橋樑�
 4. 在一般網站分頁，對 AI 說 **Use babtab to observe the current tab**；需要網站授權時在外掛批准。
 
 不用先啟動 Relay、不用設定 port、不用保持終端機開啟。使用時保留 Chrome。
-首次 npm 下載需要網路；憑證固定保存在 `~/.babtab/`，更換工作目錄不影響連線。
+首次 npm 下載需要網路（冷啟動可能要一分鐘）；憑證固定保存在 `~/.babtab/`，更換工作目錄不影響連線。
 
 ### 其他 AI 工具
 
 開啟 **Other AI tools / install with a command**，選工具並複製專屬指令：
 
 ```bash
-npx -y @babtab/relay@0.3.1 setup --target windsurf --port 3000 --device <外掛提供的deviceId>
+npx -y @babtab/relay@0.3.2 setup --target windsurf --port 3000 --device <外掛提供的deviceId>
 ```
 
 只需執行一次。指令保留其他 server、備份舊設定，寫入由 AI 工具自動啟動的 MCP 設定。
@@ -62,7 +62,8 @@ AI 工具啟動 `babtab-relay stdio --device … --client … --port 3000`，橋
 ### 常見問題
 
 - **Cursor 沒開啟？** 展開按鈕下方的 setup 指令，執行一次，再重載／啟用 MCP。
-- **沒出現配對要求？** 確认 AI 工具的 PATH 找得到 Node 20+／`npx`，且 Babtab 已啟用；保持外掛面板開啟。MCP 日誌會顯示啟動錯誤。
+- **沒出現配對要求？** 確認 AI 工具的 PATH 找得到 Node 20+／`npx`（GUI 應用常缺 shell PATH，可用 `node -v && command -v npx` 檢查），且 Babtab 已啟用；保持外掛面板開啟。Side Panel 有 **Not seeing a pairing request?** 可一鍵複製檢查指令。MCP 日誌會顯示啟動錯誤；首次 `npx` 下載需要網路。
+- **Agent 說埠被佔住／沒有回應？** 通常是舊的 `babtab-relay` 卡住（終端機 Ctrl+Z 暫停很常見）。先釋放該埠（`lsof -iTCP:3000 -sTCP:LISTEN` 後結束該行程），重載 MCP，或在進階連線設定按 **Try next port**（會把新埠存進外掛）後重新加入 Babtab，讓 MCP 埠一致。不要把 relay 留在背景暫停狀態。
 - **配對碼過期？** 保持 AI 工具執行，橋接程式會自動取得新碼。
 - **斷線？** 開啟 AI 工具和 Chrome；若先前主動 Disconnect，請在外掛按 Reconnect。
 - **憑證遺失或撤銷？** 重新批准配對；橋接程式不會跳過人工批准。

@@ -11,7 +11,7 @@ The **local relay server** for the [Babtab Chrome extension](https://chromewebst
 
 MV3 extensions cannot listen on a port, so this tiny program acts as the bridge. It runs on `localhost`, so traffic never leaves your machine. The relay forwards requests and results in memory, including page observations and screenshots; it does not persist page content.
 
-## Quick start (0.3.1)
+## Quick start (0.3.2)
 
 Requires Node.js 20+ and the matching [Babtab extension](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb). Install the extension from the [**Chrome Web Store**](https://chromewebstore.google.com/detail/babtab/pnapkckkiphkbciihimdkhofdabnmjhb); Developer mode is for local development only.
 
@@ -21,14 +21,14 @@ Requires Node.js 20+ and the matching [Babtab extension](https://chromewebstore.
 4. On a regular website, ask your agent: **Use babtab to observe the current tab**. Approve site access in Babtab if asked.
 
 No separate relay command or terminal window is needed. Keep Chrome open.
-The first npm download requires internet access. Pairing credentials are stored in `~/.babtab/`, independent of your working directory.
+The first npm download requires internet access (cold start can take a minute). Pairing credentials are stored in `~/.babtab/`, independent of your working directory.
 
 ### Other AI tools
 
 Open **Other AI tools / install with a command**, choose your tool and copy its personalized command:
 
 ```bash
-npx -y @babtab/relay@0.3.1 setup --target windsurf --port 3000 --device <device-id-from-extension>
+npx -y @babtab/relay@0.3.2 setup --target windsurf --port 3000 --device <device-id-from-extension>
 ```
 
 Run once, enable / reload MCP in your AI tool, then approve in Chrome. Setup preserves other servers and backs up existing config files. Supported automatic targets: Cursor, Claude Code, Windsurf, Copilot, Codex, Claude Desktop, Antigravity, Devin, Kimi and Hermes. Pi / Manual use the advanced HTTP flow.
@@ -52,7 +52,8 @@ Standalone token storage uses `BABTAB_TOKEN_FILE` or `./data/relay-tokens.json` 
 ### Troubleshooting
 
 - **Cursor did not open?** Use the setup command under the button, then reload / enable MCP.
-- **No pairing request?** Check that Node 20+ / `npx` is on your AI tool's PATH and Babtab is enabled. Keep the Chrome panel open. The MCP server's stderr logs explain startup problems.
+- **No pairing request?** Check that Node 20+ / `npx` is on your AI tool's PATH (GUI apps often miss shell PATH — verify with `node -v && command -v npx`) and Babtab is enabled. Keep the Chrome panel open. The Side Panel has a **Not seeing a pairing request?** section with a copyable check. MCP stderr logs explain startup problems. The first `npx` download needs network.
+- **Agent says the port is held / not responding?** Another `babtab-relay` is stuck on that port (often a terminal job paused with Ctrl+Z). Free the port (`lsof -iTCP:3000 -sTCP:LISTEN`, then stop that process), reload MCP, or use **Try next port** under Advanced connection settings (it saves the new port for the extension) and re-add Babtab so MCP matches. Do not leave a relay paused in the background.
 - **Pairing expired?** Keep the AI tool running; it requests a new code automatically.
 - **Connection stopped?** Reopen your AI tool and Chrome. If you explicitly disconnected, press Reconnect in Babtab.
 - **Lost / revoked credentials?** Approve the new pairing request; the bridge never bypasses browser approval.

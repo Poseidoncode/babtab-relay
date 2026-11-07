@@ -6,6 +6,49 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.2] — 2026-11-07
+
+### Fixed
+
+- Install no longer stalls when the npm registry is slow or unreachable: generated
+  MCP configs (setup CLI and every Side Panel one-click link/snippet) now launch
+  `npx -y --prefer-offline @babtab/relay@<version> stdio …`.
+- Codex: `setup` writes `startup_timeout_sec = 60` so the first-run download is not
+  killed by Codex's short default startup timeout.
+- Claude Code: re-running `setup` replaces an existing `babtab` entry instead of failing.
+- Pairing token file is written atomically (tmp + rename) so a crash cannot wipe tokens.
+- HTTP JSON endpoints require `Content-Type: application/json` (415 otherwise), so web
+  pages can no longer send preflight-free cross-origin POSTs to the local relay.
+- Windows: port-conflict and PATH-check hints use `netstat`/`where.exe` instead of `lsof`/`command -v`.
+- Side Panel skips re-rendering when polled approvals/events are unchanged.
+- Relay rejects requests whose `Host` header is not loopback (HTTP 403 / WS close 1008) when bound
+  to loopback, closing a DNS-rebinding path from web pages.
+- Relay answers the extension's app-level `ping` with `pong`; the extension now reconnects when a
+  relay that previously answered pings goes silent (half-open sockets after sleep / network change).
+- Stdio bridge: if the relay owner process exits mid-session, the surviving bridge restarts the
+  relay and retries once on `ECONNREFUSED`, and polls every 500ms while the relay is down.
+- Stdio bridge negotiates MCP protocol versions (2024-11-05, 2025-03-26, 2025-06-18) instead of
+  always answering 2024-11-05.
+- Stdio bridge skips the extra health/status round-trips before a tool call when the background
+  poll succeeded within the last 1.5s (lower per-call latency and load).
+- Windows: generated MCP configs use `cmd /c npx …` so clients can spawn the `npx.cmd` shim.
+
+- Stdio bridge no longer loops forever on `Waiting for the local bridge to start…`
+  when the configured port is held by a frozen or paused process that never
+  answers `/health`. After a short grace window (default 8s; override with
+  `BABTAB_START_GRACE_MS`) it returns an actionable "port is held / not
+  responding" error instead (includes `lsof` probe and a suggested alternate port).
+
+### Changed
+
+- Extension onboarding: louder pairing banner (inline Approve), PATH/Node
+  diagnose panel, post-Approve first-command prompt, Try next port (persists
+  the new port via the same Save & Connect path) + free-port probe, clearer
+  site-access vs Chrome host permission copy, Codex/Antigravity install
+  checklists.
+- Docs: align deployment claims with the stdio bridge (Node/`npx` required once;
+  no longer claim “extension only / no localhost”).
+
 ## [0.3.1] — 2026-10-05
 
 ### Changed
